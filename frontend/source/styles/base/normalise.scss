@@ -1,0 +1,3 @@
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, sans-serif; font-size: var(--font-base); color: var(--color-text); background: var(--color-bg); }
+button, textarea { font: inherit; }

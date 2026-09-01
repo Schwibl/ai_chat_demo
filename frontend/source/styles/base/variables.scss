@@ -1,0 +1,21 @@
+:root {
+  --color-bg: #101218;
+  --color-surface: #1a1f2e;
+  --color-text: #e6e9ef;
+  --color-muted: #98a1b3;
+  --color-accent: #5b9cff;
+  --color-user: #2a3550;
+  --color-assistant: #232836;
+  --space-xs: 0.53vw;
+  --space-sm: 1.07vw;
+  --space-md: 2.13vw;
+  --font-base: 1.07vw;
+}
+
+@media (max-width: 768px) {
+  :root { --font-base: 2.4vw; }
+}
+
+@media (max-width: 480px) {
+  :root { --font-base: 3.6vw; }
+}

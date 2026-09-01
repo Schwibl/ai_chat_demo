@@ -1,0 +1,22 @@
+.chat-open-button {
+  position: fixed;
+  right: var(--space-md);
+  bottom: var(--space-md);
+  z-index: 10;
+  background: var(--color-accent);
+  color: #0a1020;
+  border: none;
+  border-radius: 50%;
+  width: 5.33vw;
+  height: 5.33vw;
+  min-width: 3rem;
+  min-height: 3rem;
+  font-weight: 700;
+}
+
+@media (max-width: 768px) {
+  .chat-open-button {
+    width: 14vw;
+    height: 14vw;
+  }
+}

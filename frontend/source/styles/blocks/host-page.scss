@@ -1,0 +1,12 @@
+.host-page {
+  padding: var(--space-md);
+
+  &__title {
+    margin: 0 0 var(--space-sm);
+  }
+
+  &__text {
+    color: var(--color-muted);
+    max-width: 67vw;
+  }
+}
