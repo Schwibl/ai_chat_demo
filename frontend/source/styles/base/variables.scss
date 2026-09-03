@@ -1,21 +1,66 @@
+// Portfolio chat widget tokens — see `.prompts/base/how_to_visualise.md`
+// Size tokens use vw. Media queries redeclare the same vars.
 :root {
+  // Surfaces
   --color-bg: #101218;
   --color-surface: #1a1f2e;
+  --color-bg-hover: #2a3348;
+  --color-border: #2e3648;
+  --color-border-strong: #3d4a66;
+
+  // Text
   --color-text: #e6e9ef;
   --color-muted: #98a1b3;
+
+  // Accent + message bubbles
   --color-accent: #5b9cff;
   --color-user: #2a3550;
   --color-assistant: #232836;
+
+  // Layout / spacing
   --space-xs: 0.53vw;
   --space-sm: 1.07vw;
   --space-md: 2.13vw;
+  --radius-control: 0.27vw;
+  // Control chrome padding — denser than panel --space-sm
+  --space-control-y: 0.27vw;
+  --space-control-x: 0.4vw;
+
+  // Type
   --font-base: 1.07vw;
+
+  // Focus ring — 1px hairline is an intentional non-vw exception
+  --focus-ring-width: 1px;
+  --focus-ring-offset: 0.14vw;
+}
+
+// Large tablet / small desktop
+@media (max-width: 1024px) {
+  :root {
+    --space-md: 2.67vw;
+    --radius-control: 0.38vw;
+    --space-control-y: 0.38vw;
+    --space-control-x: 0.56vw;
+    --focus-ring-offset: 0.2vw;
+  }
 }
 
 @media (max-width: 768px) {
-  :root { --font-base: 2.4vw; }
+  :root {
+    --font-base: 2.4vw;
+    --radius-control: 0.51vw;
+    --space-control-y: 0.51vw;
+    --space-control-x: 0.75vw;
+    --focus-ring-offset: 0.26vw;
+  }
 }
 
 @media (max-width: 480px) {
-  :root { --font-base: 3.6vw; }
+  :root {
+    --font-base: 3.6vw;
+    --radius-control: 0.65vw;
+    --space-control-y: 0.81vw;
+    --space-control-x: 1.2vw;
+    --focus-ring-offset: 0.42vw;
+  }
 }

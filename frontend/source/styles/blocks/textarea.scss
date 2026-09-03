@@ -1,0 +1,50 @@
+// Shared multi-line field — compose from feature chrome; no feature__textarea padding/fill
+.textarea {
+  display: block;
+  width: 100%;
+  min-height: 8vw;
+  font-size: var(--font-base);
+  line-height: 1.45;
+  font-family: inherit;
+  color: var(--color-text);
+  background: var(--color-bg);
+  // 1px hairline border is an intentional non-vw exception
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-control);
+  padding: var(--space-control-y) var(--space-control-x);
+  box-sizing: border-box;
+  resize: vertical;
+
+  &::placeholder {
+    color: var(--color-muted);
+  }
+
+  &:hover {
+    border-color: var(--color-border-strong);
+  }
+
+  &:focus {
+    border-color: var(--color-accent);
+    outline: none;
+  }
+
+  &:focus-visible {
+    outline: var(--focus-ring-width) solid var(--color-accent);
+    outline-offset: var(--focus-ring-offset);
+  }
+
+  &:disabled {
+    color: var(--color-muted);
+    background: var(--color-surface);
+    cursor: not-allowed;
+    resize: none;
+  }
+
+  // Extra-tight density when a panel needs it
+  &--compact {
+    padding: calc(var(--space-control-y) / 2) calc(var(--space-control-x) / 2);
+    font-size: 0.93em;
+    line-height: 1.4;
+    min-height: 5vw;
+  }
+}

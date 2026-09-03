@@ -3,10 +3,13 @@
 
   &__title {
     margin: 0 0 var(--space-sm);
+    font-size: calc(var(--font-base) * 2);
+    font-weight: 600;
   }
 
   &__text {
     color: var(--color-muted);
     max-width: 67vw;
+    line-height: 1.5;
   }
 }

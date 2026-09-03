@@ -88,7 +88,7 @@ export class MessageService {
         const chips =
           msg.followUps && msg.followUps.length
             ? `<div class="chat-history__chips">${msg.followUps
-                .map((c) => `<button type="button" class="chat-history__chip" data-chip="${c}">${c}</button>`)
+                .map((c) => `<button type="button" class="button button--transparent button--with-text" data-chip="${c}">${c}</button>`)
                 .join('')}</div>`
             : '';
 

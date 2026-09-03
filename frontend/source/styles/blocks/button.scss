@@ -1,0 +1,111 @@
+// Shared action control — compose from feature chrome; no feature__button padding/fill
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  font-size: var(--font-base);
+  line-height: 1.4;
+  font-family: inherit;
+  font-weight: 600;
+  color: var(--color-text);
+  background: var(--color-bg);
+  // 1px hairline border is an intentional non-vw exception
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-control);
+  padding: var(--space-control-y) var(--space-control-x);
+  cursor: pointer;
+  box-sizing: border-box;
+  text-align: center;
+
+  &:hover {
+    background: var(--color-bg-hover);
+    border-color: var(--color-border-strong);
+  }
+
+  &:focus-visible {
+    outline: var(--focus-ring-width) solid var(--color-accent);
+    outline-offset: var(--focus-ring-offset);
+  }
+
+  &:disabled {
+    color: var(--color-muted);
+    border-color: var(--color-border);
+    background: var(--color-surface);
+    cursor: not-allowed;
+  }
+
+  // Ghost / chrome on raised surfaces
+  &--transparent {
+    color: var(--color-muted);
+    background: transparent;
+    border-color: var(--color-border);
+
+    &:hover {
+      color: var(--color-text);
+      background: var(--color-bg-hover);
+      border-color: var(--color-border-strong);
+    }
+
+    &:disabled {
+      color: var(--color-muted);
+      background: transparent;
+    }
+  }
+
+  // Domain CTA that keeps a word label
+  &--with-text {
+    font-weight: 700;
+  }
+
+  // One primary action fill
+  &--accent {
+    color: #0a1020;
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+
+    &:hover {
+      filter: brightness(1.08);
+      background: var(--color-accent);
+      border-color: var(--color-accent);
+    }
+
+    &:disabled {
+      color: var(--color-muted);
+      background: var(--color-surface);
+      border-color: var(--color-border);
+      filter: none;
+    }
+  }
+
+  // Destructive or high-alert action
+  &--attention {
+    color: #0a1020;
+    background: #c45c5c;
+    border-color: #c45c5c;
+
+    &:hover {
+      filter: brightness(1.08);
+    }
+
+    &:disabled {
+      color: var(--color-muted);
+      background: var(--color-surface);
+      border-color: var(--color-border);
+      filter: none;
+    }
+  }
+
+  // Fixed square glyph-only chrome (close, expand, etc.)
+  &--icon {
+    flex-shrink: 0;
+    box-sizing: border-box;
+    width: 2.4vw;
+    height: 2.4vw;
+    min-width: 1.75rem;
+    min-height: 1.75rem;
+    padding: 0;
+    line-height: 1;
+    font-size: 1.1em;
+  }
+}
