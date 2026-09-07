@@ -2,38 +2,31 @@
 
 ```
 portfolio_ai_chat/
+  README.md
   vite.config.ts
   tsconfig.json
   package.json
   .env.example
   vite/
-    chat-mock-plugin.ts    mock REST (step 5)
+    chat-mock-plugin.ts
   frontend/
     index.html
-    public/                 static assets (optional)
+    public/
     source/
       scripts/
-        main.ts             entry; imports main.scss
-        blocks/             UI mount (chat-widget, host-page)
-        features/           MessageService and widget logic
-        api/                fetch clients (chat-api)
-        types/              .d.ts (chat.d.ts, vite-env.d.ts)
-        pages/              unused in this demo; reserved for layout parity
+        main.ts
+        blocks/           chat-widget mount
+        features/         MessageService
+        api/              chat-api.ts
+        types/            chat.d.ts, vite-env.d.ts
       styles/
         main.scss
-        base/                 variables, normalise
-        blocks/               one BEM block per file
-          button.scss         shared control chrome
-          input.scss          shared control chrome
-          textarea.scss       shared control chrome
-          host-page.scss
-          chat-open-button.scss
-          chat-panel.scss
-          chat-history.scss
-  documentation/            tracked human docs
-  dist/                       build output (gitignored)
+        base/             variables, normalise
+        blocks/             BEM blocks (button, textarea, host-page, chat-*)
+  documentation/
+  dist/                   gitignored build output
 ```
 
 Vite root is `frontend/`. SCSS is imported from `main.ts`, not linked in HTML.
 
-Shared control blocks (`.button`, `.input`, `.textarea`) live under `styles/blocks/` — compose them from feature markup; rules in [`.prompts/base/how_to_visualise.md`](../../.prompts/base/how_to_visualise.md).
+Shared `.button`, `.input`, and `.textarea` blocks live under `styles/blocks/` and are composed from widget markup.

@@ -1,6 +1,6 @@
 # AI chat widget demo
 
-Embeddable chat widget in vanilla TypeScript: mock REST, optimistic send, follow-up chips. Portfolio extract of production CMS integration patterns.
+Embeddable chat widget in vanilla TypeScript. Mock REST backend, optimistic send, polling for replies, follow-up chips. Extract of production CMS embed patterns (Neurohelper K / Atom Media).
 
 ## Run
 
@@ -9,19 +9,30 @@ npm install
 npm run dev
 ```
 
-Open http://localhost:5174 — click **Chat**, send a message. Replies come from a Vite mock API (`vite/chat-mock-plugin.ts`).
+Open http://localhost:5174. Click **Chat**, send a message, try **Expand** for centered layout, click a follow-up chip after a reply.
 
-`npm run preview` also serves the mock API for production builds.
+`npm run preview` serves the production build from `dist/` and still runs the mock API.
 
 ## Stack
 
-TypeScript, Vite, SCSS (BEM). No React.
+TypeScript, Vite, SCSS with BEM. No React.
 
-## What it shows
+## What this demo shows
 
-- Floating trigger + panel with size toggle
-- init / getMessages / sendMessage API seam
-- Optimistic user bubbles and polling for assistant reply
-- Follow-up chip actions
+- Host page stub plus floating trigger and panel (embed pattern)
+- Outside click and close button dismiss the panel
+- `POST /api/chat/init`, `/getMessages`, `/sendMessage` client seam
+- Optimistic user bubbles reconciled from the server
+- Polling with a preparing indicator until the assistant row appears
+- Follow-up chips that send the chip label as the next message
+- `localStorage` session token across panel reopens
 
-Production version used a CDN IIFE on a Bitrix site. This repo is a self-contained demo with generic branding.
+## Production context
+
+The production widget shipped as a CDN IIFE on a Bitrix site. This repo is a self-contained demo with generic copy and a Vite mock plugin instead of a live model.
+
+## Further reading
+
+- [Architecture](architecture.md)
+- [Local server](dev/local_server.md)
+- [Known gaps](tech/next_steps.md)

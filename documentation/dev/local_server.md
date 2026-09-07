@@ -12,7 +12,7 @@ Open http://localhost:5174 after `npm run dev`.
 
 ## Env
 
-Copy `.env.example` to `.env` if you add `VITE_*` vars later. Default demo needs no env file.
+Copy `.env.example` to `.env` if you add `VITE_*` vars later. The default demo needs no env file.
 
 ## Mock API
 
@@ -24,7 +24,7 @@ Dev and preview serve chat REST via `vite/chat-mock-plugin.ts`:
 | POST | `/api/chat/getMessages/` |
 | POST | `/api/chat/sendMessage/` |
 
-See [`documentation/architecture.md`](../architecture.md) and `.prompts/base/api_stubs.md` (local).
+See [architecture.md](../architecture.md) for the client seam and store behaviour.
 
 ## Build output
 

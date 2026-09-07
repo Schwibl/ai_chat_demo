@@ -1,14 +1,14 @@
 import { apiGetMessages, apiInit, apiSendMessage } from '../api/chat-api';
 
 const TOKEN_KEY = 'portfolio-chat-token';
-const POLL_MS = 1500;
+const POLL_MS = 3000;
 
 // Chat widget state and lifecycle
 export class MessageService {
   private chatToken = '';
   private messages: t_Message[] = [];
-  private pollTimer: number | null = null;
   private sendInProgress = false;
+  private waitingForAssistant = false;
 
   constructor(
     private panel: HTMLElement,
@@ -41,6 +41,7 @@ export class MessageService {
     }
 
     this.sendInProgress = true;
+    this.panel.classList.remove('chat-panel--error');
     this.panel.classList.add('chat-panel--sending');
 
     const tempId = `temp-${Date.now()}`;
@@ -58,17 +59,28 @@ export class MessageService {
     }
   }
 
-  // Poll until assistant message appears after send
+  // Poll getMessages until a new assistant reply appears
   private async waitForAssistantReply(): Promise<void> {
-    const before = this.messages.filter((m) => m.role === 'assistant').length;
+    const assistantCountBefore = this.messages.filter((m) => m.role === 'assistant').length;
+    this.waitingForAssistant = true;
+    this.render();
 
-    for (let i = 0; i < 8; i += 1) {
-      await this.refreshMessages();
-      const after = this.messages.filter((m) => m.role === 'assistant').length;
-      if (after > before) {
-        return;
+    try {
+      for (let i = 0; i < 8; i += 1) {
+        await this.refreshMessages();
+
+        const assistantCountAfter = this.messages.filter((m) => m.role === 'assistant').length;
+        const last = this.messages[this.messages.length - 1];
+
+        if (assistantCountAfter > assistantCountBefore && last?.role === 'assistant') {
+          return;
+        }
+
+        await new Promise((r) => window.setTimeout(r, POLL_MS));
       }
-      await new Promise((r) => window.setTimeout(r, POLL_MS));
+    } finally {
+      this.waitingForAssistant = false;
+      this.render();
     }
   }
 
@@ -79,9 +91,19 @@ export class MessageService {
     this.render();
   }
 
-  // Paint history + follow-up chips
+  // Whether to show the preparing row after real messages
+  private shouldShowTyping(): boolean {
+    if (!this.waitingForAssistant) {
+      return false;
+    }
+
+    const last = this.messages[this.messages.length - 1];
+    return !last || last.role !== 'assistant';
+  }
+
+  // Paint history, follow-up chips, and optional typing row
   private render(): void {
-    this.historyEl.innerHTML = this.messages
+    const rows = this.messages
       .map((msg) => {
         const mod = msg.temp ? ' chat-history__item--temp' : '';
         const role = msg.role === 'user' ? 'chat-history__item--user' : 'chat-history__item--assistant';
@@ -95,6 +117,12 @@ export class MessageService {
         return `<article class="chat-history__item ${role}${mod}"><p class="chat-history__text">${msg.text}</p>${chips}</article>`;
       })
       .join('');
+
+    const typing = this.shouldShowTyping()
+      ? `<article class="chat-history__item chat-history__item--assistant chat-history__item--typing" aria-live="polite"><p class="chat-history__text">Preparing<span class="chat-history__dots" aria-hidden="true"></span></p></article>`
+      : '';
+
+    this.historyEl.innerHTML = rows + typing;
 
     this.historyEl.querySelectorAll<HTMLButtonElement>('[data-chip]').forEach((btn) => {
       btn.addEventListener('click', () => {

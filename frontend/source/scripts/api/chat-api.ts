@@ -1,6 +1,6 @@
 const API_BASE = '/api/chat';
 
-// POST JSON helper
+// Shared POST JSON helper for mock chat REST
 async function postJson<T>(path: string, body: Record<string, string>): Promise<T> {
   const response = await fetch(`${API_BASE}${path}`, {
     method: 'POST',

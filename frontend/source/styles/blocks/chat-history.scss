@@ -17,10 +17,35 @@
     &--temp {
       opacity: 0.75;
     }
+
+    &--typing {
+      .chat-history__text {
+        color: var(--color-muted);
+        font-style: italic;
+      }
+    }
   }
 
   &__text {
     margin: 0;
+  }
+
+  &__dots {
+    display: inline-block;
+    width: 1.2em;
+    text-align: left;
+
+    &::after {
+      content: '';
+      animation: chat-history-dots 1.2s steps(4, end) infinite;
+    }
+  }
+
+  @keyframes chat-history-dots {
+    0% { content: ''; }
+    25% { content: '.'; }
+    50% { content: '..'; }
+    75% { content: '...'; }
   }
 
   &__chips {
