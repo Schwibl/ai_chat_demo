@@ -2,39 +2,25 @@
 
 [![PR checks](https://github.com/Schwibl/ai_chat_demo/actions/workflows/pr-checks.yml/badge.svg)](https://github.com/Schwibl/ai_chat_demo/actions/workflows/pr-checks.yml)
 
-Vanilla TypeScript AI chat widget with optimistic UI and mock REST — portfolio extract of production embed patterns.
+An embeddable AI chat widget in vanilla TypeScript, with optimistic sending, polling for replies and follow-up chips. Replies come from a mock REST API; no real model is called.
 
-Live demo: https://ai-chat-demo-puce.vercel.app
-
-## Quick start
-
-```bash
-npm install
-npm run dev
-```
-
-Open http://localhost:5174 and click **Chat**.
-
-```bash
-npm run build      # typecheck + production bundle → dist/
-npm run preview    # serve dist/ (mock API included)
-npm run typecheck  # tsc --noEmit
-npm run e2e        # Playwright smoke against vite preview (build first)
-```
-
-No API key. The mock server is `vite/chat-mock-plugin.ts`. Opening chat on a static host that does not run that plugin shows a short “Chat API is not available” message instead of throwing.
-
-## Docs
-
-- [CI pipeline](docs/ci.md)
-- [Overview and demo walkthrough](documentation/README.md)
-- [Architecture](documentation/architecture.md)
-- [Local dev](documentation/dev/local_server.md)
-- [Folder structure](documentation/tech/folder_structure.md)
-- [Known gaps](documentation/tech/next_steps.md)
+**Live:** https://ai-chat-demo-puce.vercel.app
 
 ## Stack
+TypeScript 5.6, Vite 6, SCSS (BEM), Playwright 1.64 for e2e. No React or Preact.
 
-TypeScript, Vite, SCSS (BEM). No React or Preact.
+## Run
+```bash
+npm install
+npm run dev        # http://localhost:5174, click Chat
+```
+No env vars are needed. The mock API (`vite/chat-mock-plugin.ts`) runs in dev and preview.
 
-Mock replies only — no live LLM in this repo.
+```bash
+npm run typecheck
+npm run build      # typecheck + bundle to dist/
+npm run preview    # serve dist/ with the mock API
+npm run e2e        # Playwright
+```
+
+More in [documentation/](documentation/README.md).
