@@ -1,0 +1,18 @@
+// Landmark box for the trigger. Panel and backdrop stay position:fixed to the viewport.
+.chat-widget {
+  position: fixed;
+  right: var(--space-md);
+  bottom: var(--space-md);
+  z-index: 10;
+  width: 5.33vw;
+  height: 5.33vw;
+  min-width: 3rem;
+  min-height: 3rem;
+}
+
+@media (max-width: 768px) {
+  .chat-widget {
+    width: 14vw;
+    height: 14vw;
+  }
+}

@@ -14,10 +14,13 @@
   box-shadow: 0 1vw 2vw rgba(0, 0, 0, 0.35);
   transform: translateY(1vw) scale(0.96);
   opacity: 0;
+  // visibility (not only opacity) drops the closed panel from tab order and the a11y tree
+  visibility: hidden;
   pointer-events: none;
   transition:
     opacity 0.2s,
     transform 0.25s,
+    visibility 0s linear 0.25s,
     width 0.25s,
     height 0.25s,
     top 0.25s,
@@ -28,8 +31,21 @@
 
   &--opened {
     opacity: 1;
+    visibility: visible;
     pointer-events: auto;
     transform: translateY(0) scale(1);
+    // Show immediately on open; the base rule delays visibility until the close fade ends
+    transition:
+      opacity 0.2s,
+      transform 0.25s,
+      visibility 0s linear 0s,
+      width 0.25s,
+      height 0.25s,
+      top 0.25s,
+      left 0.25s,
+      right 0.25s,
+      bottom 0.25s,
+      max-height 0.25s;
 
     &.chat-panel--size-full {
       transform: translate(-50%, -50%);
@@ -95,11 +111,29 @@
     .button[data-action="send"] {
       flex-shrink: 0;
       align-self: stretch;
-      min-width: 2.5rem;
+      min-width: 36px;
+      min-height: 36px;
       color: var(--color-accent);
 
       &:hover {
         color: var(--color-text);
+      }
+
+      // Disabled used the muted token and disappeared on the panel surface
+      &:disabled {
+        color: #d7deea;
+        opacity: 1;
+      }
+
+      svg {
+        width: 20px;
+        height: 20px;
+        display: block;
+      }
+
+      @media (max-width: 768px), (pointer: coarse) {
+        min-width: 44px;
+        min-height: 44px;
       }
     }
   }

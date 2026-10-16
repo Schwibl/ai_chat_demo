@@ -1,6 +1,8 @@
 // Portfolio chat widget tokens — see `.prompts/base/how_to_visualise.md`
 // Size tokens use vw. Media queries redeclare the same vars.
 :root {
+  color-scheme: dark;
+
   // Surfaces
   --color-bg: #101218;
   --color-surface: #1a1f2e;
