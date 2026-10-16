@@ -16,21 +16,33 @@ export class MessageService {
     private onFollowUp: (text: string) => void,
   ) {}
 
-  // Boot: init API + first history load
+  // Boot: init API + first history load. Missing API must not reject uncaught.
   async start(): Promise<void> {
     this.panel.classList.add('chat-panel--loading');
 
-    const stored = localStorage.getItem(TOKEN_KEY);
-    if (stored) {
-      this.chatToken = stored;
-    } else {
-      const init = await apiInit();
-      this.chatToken = init.chatToken;
-      localStorage.setItem(TOKEN_KEY, this.chatToken);
-    }
+    try {
+      const stored = localStorage.getItem(TOKEN_KEY);
+      if (stored) {
+        this.chatToken = stored;
+      } else {
+        const init = await apiInit();
+        this.chatToken = init.chatToken;
+        localStorage.setItem(TOKEN_KEY, this.chatToken);
+      }
 
-    await this.refreshMessages();
-    this.panel.classList.remove('chat-panel--loading');
+      await this.refreshMessages();
+    } catch {
+      this.panel.classList.add('chat-panel--error');
+      this.showApiUnavailable();
+    } finally {
+      this.panel.classList.remove('chat-panel--loading');
+    }
+  }
+
+  // Static hosts have no Vite mock plugin; say so instead of failing silently
+  private showApiUnavailable(): void {
+    this.historyEl.innerHTML =
+      '<article class="chat-history__item chat-history__item--assistant"><p class="chat-history__text">Chat API is not available. This demo uses a local mock server — run npm run dev or npm run preview. No API key is required.</p></article>';
   }
 
   // Send with optimistic temp bubble
