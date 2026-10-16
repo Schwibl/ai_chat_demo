@@ -54,4 +54,17 @@
     gap: var(--space-xs);
     margin-top: var(--space-sm);
   }
+
+  &__error {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-sm);
+    margin-top: var(--space-sm);
+    color: #ffb4b4;
+  }
+
+  &__item > .button {
+    margin-top: var(--space-sm);
+  }
 }

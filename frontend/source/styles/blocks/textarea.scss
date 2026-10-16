@@ -48,3 +48,11 @@
     min-height: 5vw;
   }
 }
+
+// Below 16px, iOS zooms the page when the field is focused
+@media (max-width: 768px) {
+  .textarea,
+  .textarea--compact {
+    font-size: max(16px, var(--font-base));
+  }
+}

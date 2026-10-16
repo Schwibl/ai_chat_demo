@@ -4,11 +4,14 @@
   z-index: 20;
   background: rgba(0, 0, 0, 0.45);
   opacity: 0;
+  visibility: hidden;
   pointer-events: none;
-  transition: opacity 0.2s;
+  transition: opacity 0.2s, visibility 0s linear 0.2s;
 
   &--visible {
     opacity: 1;
+    visibility: visible;
     pointer-events: auto;
+    transition: opacity 0.2s, visibility 0s linear 0s;
   }
 }

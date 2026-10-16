@@ -20,10 +20,10 @@ TypeScript, Vite, SCSS with BEM. No React.
 ## What this demo shows
 
 - Host page stub plus floating trigger and panel (embed pattern)
-- Outside click and close button dismiss the panel
+- Outside click, close button, and Escape dismiss the panel
 - `POST /api/chat/init`, `/getMessages`, `/sendMessage` client seam
 - Optimistic user bubbles reconciled from the server
-- Polling with a preparing indicator until the assistant row appears
+- Preparing indicator while a reply is pending; failed sends show an inline error and Retry
 - Follow-up chips that send the chip label as the next message
 - `localStorage` session token across panel reopens
 

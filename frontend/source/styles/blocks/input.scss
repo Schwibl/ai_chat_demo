@@ -43,3 +43,11 @@
     line-height: 1.4;
   }
 }
+
+// Below 16px, iOS zooms the page when the field is focused
+@media (max-width: 768px) {
+  .input,
+  .input--compact {
+    font-size: max(16px, var(--font-base));
+  }
+}

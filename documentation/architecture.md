@@ -4,20 +4,21 @@
 
 ```
 main.ts → chat-widget.ts
-            ├── host-page + chat-open-button
-            ├── chat-panel-backdrop + chat-panel
+            ├── <main> host-page
+            ├── <aside aria-label="Chat"> trigger, backdrop, panel
             ├── MessageService (features/message-service.ts)
             └── api/chat-api.ts → Vite mock plugin
 ```
 
-The widget mounts into `#app`. In production, only the trigger and panel would inject into an existing page; the host block here simulates that page.
+The widget mounts into `#app`. In production, only the trigger and panel would inject into an existing page; the host block here simulates that page. The host is a `main` landmark. The trigger and panel sit in one named `aside`.
 
 ## Host shell
 
 | Block | File | Role |
 |-------|------|------|
 | `host-page` | `styles/blocks/host-page.scss` | Demo page content |
-| `chat-open-button` | `styles/blocks/chat-open-button.scss` | Fixed trigger; opens panel |
+| `chat-widget` | `styles/blocks/chat-widget.scss` | Fixed landmark that holds the trigger |
+| `chat-open-button` | `styles/blocks/chat-open-button.scss` | Trigger; opens panel |
 
 Markup is built in `blocks/chat-widget.ts`.
 
@@ -40,7 +41,7 @@ Shared controls: `.button`, `.textarea` under `styles/blocks/`.
 | `chat-panel--size-full` | Centered modal (~60×75vw) |
 | `chat-panel--loading` | Session init |
 | `chat-panel--sending` | Message in flight |
-| `chat-panel--error` | Send failed |
+| `chat-panel--error` | Init or send failed (inline text plus Retry) |
 
 ## Mock REST API
 
@@ -66,16 +67,17 @@ File: `frontend/source/scripts/features/message-service.ts`
 | Concern | Behaviour |
 |---------|-----------|
 | Token | `localStorage` key `portfolio-chat-token`; `apiInit()` on first visit |
-| Open | `start()` → load history → render greeting |
+| Open | `start()` → load history → render greeting. Empty history shows a local hint and chips |
 | Send | Optimistic `temp` user row → `apiSendMessage` → poll until assistant reply |
-| Typing | `chat-history__item--typing` while polling |
+| Typing | `chat-history__item--typing` from send start until the reply or an error |
+| Failure | Inline “Couldn't get a reply.” and Retry; closed panel is `inert` |
 | Chips | `followUps` buttons call `send(chipText)` |
 
 Flow:
 
 ```
 open panel → start()
-send       → temp bubble → POST sendMessage → poll getMessages → preparing row → reply
+send       → temp bubble + preparing → POST sendMessage → poll getMessages → reply or inline Retry
 chip click → send(label)
 ```
 
