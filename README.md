@@ -4,7 +4,7 @@
 
 Vanilla TypeScript AI chat widget with optimistic UI and mock REST — portfolio extract of production embed patterns.
 
-Live demo: https://<project>.vercel.app
+Live demo: https://ai-chat-demo-puce.vercel.app
 
 ## Quick start
 
