@@ -7,8 +7,6 @@ portfolio_ai_chat/
   tsconfig.json
   package.json
   .env.example
-  vite/
-    chat-mock-plugin.ts
   frontend/
     index.html
     public/

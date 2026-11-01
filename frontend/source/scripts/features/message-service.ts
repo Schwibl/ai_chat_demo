@@ -54,16 +54,15 @@ export class MessageService {
       await this.refreshMessages();
     } catch {
       this.panel.classList.add('chat-panel--error');
-      this.showApiUnavailable();
+      this.showStartError();
     } finally {
       this.panel.classList.remove('chat-panel--loading');
     }
   }
 
-  // Static hosts have no Vite mock plugin; say so instead of failing silently
-  private showApiUnavailable(): void {
+  private showStartError(): void {
     this.historyEl.innerHTML =
-      '<article class="chat-history__item chat-history__item--assistant"><p class="chat-history__text">Chat API is not available. This demo uses a local mock server — run npm run dev or npm run preview. No API key is required.</p><button type="button" class="button button--transparent button--with-text" data-action="retry">Retry</button></article>';
+      '<article class="chat-history__item chat-history__item--assistant"><p class="chat-history__text">Could not start the chat.</p><button type="button" class="button button--transparent button--with-text" data-action="retry">Retry</button></article>';
     this.historyEl.querySelector<HTMLButtonElement>('[data-action="retry"]')?.addEventListener('click', () => {
       void this.start();
     });

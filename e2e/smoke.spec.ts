@@ -60,49 +60,17 @@ test('closed panel stays out of the tab order and Escape closes it', async ({ pa
   await expect(page.getByRole('button', { name: 'Expand panel' })).toHaveCount(0);
 });
 
-test('shows a typing indicator, then retry, when send fails', async ({ page }) => {
-  let releaseSend: () => void = () => {};
-  const sendGate = new Promise<void>((resolve) => {
-    releaseSend = resolve;
-  });
-
-  await page.route('**/api/chat/**', async (route) => {
-    const url = route.request().url();
-
-    if (url.includes('/init')) {
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify({ chatToken: 'demo-token' }),
-      });
-      return;
-    }
-
-    if (url.includes('/getMessages')) {
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify({ messages: [] }),
-      });
-      return;
-    }
-
-    await sendGate;
-    await route.fulfill({ status: 500, body: 'fail' });
-  });
-
+test('shows a typing indicator, then the scripted reply', async ({ page }) => {
   await page.goto('/');
   await page.getByRole('button', { name: 'Open chat' }).click();
-  await expect(page.getByText('Hi. Ask anything.')).toBeVisible();
+  await expect(page.getByText('replies come from a mock server')).toBeVisible();
   await expect(page.getByRole('button', { name: 'What can you do?' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'How is this built?' })).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Show an example' })).toBeVisible();
   await page.locator('[data-slot="message-input"]').fill('ping');
   await page.getByRole('button', { name: 'Send message' }).click();
   await expect(page.getByText('Preparing')).toBeVisible();
-  releaseSend();
-  await expect(page.getByRole('alert')).toContainText("Couldn't get a reply.");
-  await expect(page.getByRole('button', { name: 'Retry' })).toBeVisible();
+  await expect(page.getByText('optimistic UI')).toBeVisible();
+  await expect(page.getByRole('alert')).toHaveCount(0);
 });
 
 test('uses 36px controls on desktop and 44px plus 16px text on a phone width', async ({ page }) => {
@@ -125,13 +93,29 @@ test('uses 36px controls on desktop and 44px plus 16px text on a phone width', a
   expect(fontSize).toBeGreaterThanOrEqual(16);
 });
 
-test('shows a clear message when the chat API is missing', async ({ page }) => {
-  await page.route('**/api/chat/**', (route) => {
-    void route.fulfill({ status: 404, body: 'missing' });
+test('completes a conversation while /api is blocked', async ({ page }) => {
+  const errors = trackConsoleErrors(page);
+  const apiHits: string[] = [];
+
+  page.on('request', (request) => {
+    if (new URL(request.url()).pathname.includes('/api')) {
+      apiHits.push(request.url());
+    }
   });
+  await page.route('**/api/**', (route) => route.abort());
 
   await page.goto('/');
+  await expect(page).toHaveTitle('AI chat widget demo');
   await page.getByRole('button', { name: 'Open chat' }).click();
-  await expect(page.getByText('Chat API is not available')).toBeVisible();
-  await expect(page.getByText('No API key is required')).toBeVisible();
+  await expect(page.getByText('replies come from a mock server')).toBeVisible();
+  await page.locator('[data-slot="message-input"]').fill('ping');
+  await page.getByRole('button', { name: 'Send message' }).click();
+  await expect(page.getByText('Preparing')).toBeVisible();
+  await expect(page.getByText('ping', { exact: true })).toBeVisible();
+  await expect(page.getByText('optimistic UI')).toBeVisible();
+  await page.getByRole('button', { name: 'How does polling work?' }).click();
+  await expect(page.locator('.chat-history__item--user', { hasText: 'How does polling work?' })).toBeVisible();
+  await expect(page.getByText('not a live model')).toBeVisible();
+  expect(apiHits).toEqual([]);
+  expect(errors).toEqual([]);
 });

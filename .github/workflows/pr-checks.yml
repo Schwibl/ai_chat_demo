@@ -62,7 +62,7 @@ jobs:
       - name: Build
         run: npm run build
 
-      # playwright.config.ts serves dist/ with vite preview (mock API included)
+      # playwright.config.ts serves dist/ with vite preview
       - name: Serve dist and run smoke tests
         run: npm run e2e
 

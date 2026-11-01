@@ -15,7 +15,7 @@ export function mountChatWidget(root: HTMLElement): void {
   root.innerHTML = `
     <main class="host-page">
       <h1 class="host-page__title">Example site page</h1>
-      <p class="host-page__text">The chat widget below mirrors an embeddable production pattern: floating trigger, panel, mock REST, optimistic send.</p>
+      <p class="host-page__text">The chat widget below mirrors an embeddable production pattern: floating trigger, panel, scripted replies, optimistic send.</p>
     </main>
     <aside class="chat-widget" aria-label="Chat">
       <button type="button" class="button button--with-text button--accent chat-open-button" data-action="open-chat" aria-label="Open chat" aria-expanded="false" aria-controls="chat-panel">Chat</button>
