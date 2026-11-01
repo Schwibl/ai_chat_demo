@@ -20,7 +20,7 @@ The widget mounts into `#app`. In production, only the trigger and panel would i
 | `chat-widget` | `styles/blocks/chat-widget.scss` | Fixed landmark that holds the trigger |
 | `chat-open-button` | `styles/blocks/chat-open-button.scss` | Trigger; opens panel |
 
-Markup is built in `blocks/chat-widget.ts`. At a viewport of 360px the Chat launcher is hidden while `.chat-panel` has `data-state="open"`.
+Markup is built in `blocks/chat-widget.ts`. The launcher is hidden whenever `.chat-panel` has `data-state="open"`. Icon buttons are `aria-hidden` because the button has the name, and strokes use `currentColor`. `inert` is set as a property because `innerHTML` has dropped the attribute in some engines. Escape is handled on `document` because the textarea used to swallow it; closing returns focus to the launcher.
 
 ## Chat panel
 

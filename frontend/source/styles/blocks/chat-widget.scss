@@ -1,4 +1,3 @@
-// Landmark box for the trigger. Panel and backdrop stay position:fixed to the viewport.
 .chat-widget {
   position: fixed;
   right: var(--space-md);
@@ -17,8 +16,6 @@
   }
 }
 
-@media (max-width: 360px) {
-  .chat-widget:has(.chat-panel[data-state="open"]) .chat-open-button {
-    display: none;
-  }
+.chat-widget:has(.chat-panel[data-state="open"]) .chat-open-button {
+  display: none;
 }

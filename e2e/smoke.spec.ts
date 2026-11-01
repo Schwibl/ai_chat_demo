@@ -40,7 +40,7 @@ test('opens the chat and shows the mock greeting', async ({ page }) => {
   await page.goto('/');
   await page.getByRole('button', { name: 'Open chat' }).click();
   await expect(page.locator('.chat-panel')).toHaveAttribute('data-state', 'open');
-  await expect(page.getByRole('button', { name: 'Open chat' })).toHaveAttribute('aria-expanded', 'true');
+  await expect(page.locator('.chat-open-button')).toHaveAttribute('aria-expanded', 'true');
   await expect(page.locator('[data-slot="message-input"]')).toBeFocused();
   await expect(page.getByText('Replies are scripted in your browser.')).toBeVisible();
   expect(errors).toEqual([]);
@@ -113,18 +113,20 @@ test('completes a conversation while /api is blocked', async ({ page }) => {
   await expect(page.getByText('optimistic UI')).toBeVisible();
   await page.getByRole('button', { name: 'How does polling work?' }).click();
   await expect(page.locator('.chat-history__item--user', { hasText: 'How does polling work?' })).toBeVisible();
-  await expect(page.getByText('not a live model')).toBeVisible();
+  await expect(page.getByText('scripted replies, not a live model')).toBeVisible();
   expect(apiHits).toEqual([]);
   expect(errors).toEqual([]);
 });
 
-test('hides the Chat launcher at 360px while the panel is open', async ({ page }) => {
-  await page.setViewportSize({ width: 360, height: 800 });
-  await page.goto('/');
-  const launcher = page.getByRole('button', { name: 'Open chat' });
-  await expect(launcher).toBeVisible();
-  await launcher.click();
-  await expect(launcher).toBeHidden();
-  await page.getByRole('button', { name: 'Close chat' }).click();
-  await expect(launcher).toBeVisible();
+test('hides the Chat launcher while the panel is open', async ({ page }) => {
+  for (const width of [360, 390]) {
+    await page.setViewportSize({ width, height: 800 });
+    await page.goto('/');
+    const launcher = page.getByRole('button', { name: 'Open chat' });
+    await expect(launcher).toBeVisible();
+    await launcher.click();
+    await expect(launcher).toBeHidden();
+    await page.getByRole('button', { name: 'Close chat' }).click();
+    await expect(launcher).toBeVisible();
+  }
 });

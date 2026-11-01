@@ -10,7 +10,7 @@ const GREETING: t_Message = {
 
 const ASSISTANT_REPLIES: { text: string; followUps: string[] }[] = [
   {
-    text: 'Here is a short answer based on your question. This demo uses a mock API, not a live model.',
+    text: 'Here is a short answer based on your question. This demo uses scripted replies, not a live model.',
     followUps: ['Tell me more', 'Show an example', 'What stack is this?'],
   },
   {
