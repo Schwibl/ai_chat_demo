@@ -6,7 +6,6 @@ const SEND_ERROR = "Couldn't get a reply.";
 const EMPTY_HINT = 'Hi. Ask anything.';
 const EMPTY_CHIPS = ['What can you do?', 'How is this built?', 'Show an example'];
 
-// innerHTML paint: escape so a message cannot become markup
 function escapeHtml(value: string): string {
   return value
     .replace(/&/g, '&amp;')
@@ -15,7 +14,6 @@ function escapeHtml(value: string): string {
     .replace(/"/g, '&quot;');
 }
 
-// Chat widget state and lifecycle
 export class MessageService {
   private chatToken = '';
   private messages: t_Message[] = [];
@@ -30,12 +28,10 @@ export class MessageService {
     private onFollowUp: (text: string) => void,
   ) {}
 
-  // Widget checks this before clearing the textarea
   isSending(): boolean {
     return this.sendInProgress;
   }
 
-  // Boot: init API + first history load. Missing API must not reject uncaught.
   async start(): Promise<void> {
     this.panel.classList.add('chat-panel--loading');
     this.panel.classList.remove('chat-panel--error');
@@ -68,7 +64,6 @@ export class MessageService {
     });
   }
 
-  // Send with optimistic temp bubble. Typing stays up until a reply or a failure.
   async send(text: string): Promise<void> {
     const trimmed = text.trim();
     if (!trimmed || this.sendInProgress) {
@@ -104,7 +99,6 @@ export class MessageService {
     }
   }
 
-  // Poll getMessages until a new assistant reply appears
   private async waitForAssistantReply(): Promise<void> {
     const assistantCountBefore = this.messages.filter((message) => message.role === 'assistant').length;
 
@@ -124,14 +118,12 @@ export class MessageService {
     throw new Error('no reply');
   }
 
-  // Load messages from API
   private async refreshMessages(): Promise<void> {
     const data = await apiGetMessages(this.chatToken);
     this.messages = data.messages;
     this.render();
   }
 
-  // Whether to show the preparing row after real messages
   private shouldShowTyping(): boolean {
     if (!this.waitingForAssistant || this.sendError) {
       return false;
@@ -141,7 +133,6 @@ export class MessageService {
     return !last || last.role !== 'assistant';
   }
 
-  // Paint history, follow-up chips, typing row, and send error
   private render(): void {
     const source = this.messages.length
       ? this.messages

@@ -1,6 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
 
-// Keep browser errors so a red smoke points at the message
 function trackConsoleErrors(page: Page): string[] {
   const errors: string[] = [];
 
@@ -43,7 +42,7 @@ test('opens the chat and shows the mock greeting', async ({ page }) => {
   await expect(page.locator('.chat-panel')).toHaveAttribute('data-state', 'open');
   await expect(page.getByRole('button', { name: 'Open chat' })).toHaveAttribute('aria-expanded', 'true');
   await expect(page.locator('[data-slot="message-input"]')).toBeFocused();
-  await expect(page.getByText('replies come from a mock server')).toBeVisible();
+  await expect(page.getByText('Replies are scripted in your browser.')).toBeVisible();
   expect(errors).toEqual([]);
 });
 
@@ -63,7 +62,7 @@ test('closed panel stays out of the tab order and Escape closes it', async ({ pa
 test('shows a typing indicator, then the scripted reply', async ({ page }) => {
   await page.goto('/');
   await page.getByRole('button', { name: 'Open chat' }).click();
-  await expect(page.getByText('replies come from a mock server')).toBeVisible();
+  await expect(page.getByText('Replies are scripted in your browser.')).toBeVisible();
   await expect(page.getByRole('button', { name: 'What can you do?' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'How is this built?' })).toBeVisible();
   await page.locator('[data-slot="message-input"]').fill('ping');
@@ -77,7 +76,6 @@ test('uses 36px controls on desktop and 44px plus 16px text on a phone width', a
   await page.setViewportSize({ width: 1280, height: 800 });
   await page.goto('/');
   await page.getByRole('button', { name: 'Open chat' }).click();
-  // Panel scales from 0.96 to 1; measure after that transition or the box is short
   await expect(page.locator('.chat-panel')).toHaveCSS('transform', 'matrix(1, 0, 0, 1, 0, 0)');
   const desktopExpand = await page.getByRole('button', { name: 'Expand panel' }).boundingBox();
   expect(desktopExpand?.width).toBeGreaterThanOrEqual(36);
@@ -107,7 +105,7 @@ test('completes a conversation while /api is blocked', async ({ page }) => {
   await page.goto('/');
   await expect(page).toHaveTitle('AI chat widget demo');
   await page.getByRole('button', { name: 'Open chat' }).click();
-  await expect(page.getByText('replies come from a mock server')).toBeVisible();
+  await expect(page.getByText('Replies are scripted in your browser.')).toBeVisible();
   await page.locator('[data-slot="message-input"]').fill('ping');
   await page.getByRole('button', { name: 'Send message' }).click();
   await expect(page.getByText('Preparing')).toBeVisible();
@@ -118,4 +116,15 @@ test('completes a conversation while /api is blocked', async ({ page }) => {
   await expect(page.getByText('not a live model')).toBeVisible();
   expect(apiHits).toEqual([]);
   expect(errors).toEqual([]);
+});
+
+test('hides the Chat launcher at 360px while the panel is open', async ({ page }) => {
+  await page.setViewportSize({ width: 360, height: 800 });
+  await page.goto('/');
+  const launcher = page.getByRole('button', { name: 'Open chat' });
+  await expect(launcher).toBeVisible();
+  await launcher.click();
+  await expect(launcher).toBeHidden();
+  await page.getByRole('button', { name: 'Close chat' }).click();
+  await expect(launcher).toBeVisible();
 });

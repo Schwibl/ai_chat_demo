@@ -4,7 +4,7 @@ const REPLY_DELAY_MS = 750;
 const GREETING: t_Message = {
   id: 'greeting',
   role: 'assistant',
-  text: 'Hi. Ask anything — replies come from a mock server.',
+  text: 'Hi. Ask anything. Replies are scripted in your browser.',
   followUps: ['What can you do?', 'How is this built?'],
 };
 
@@ -14,7 +14,7 @@ const ASSISTANT_REPLIES: { text: string; followUps: string[] }[] = [
     followUps: ['Tell me more', 'Show an example', 'What stack is this?'],
   },
   {
-    text: 'The widget uses optimistic UI: your message appears immediately, then the mock server adds this reply.',
+    text: 'The widget uses optimistic UI: your message appears immediately. Replies are scripted in your browser.',
     followUps: ['How does polling work?', 'Open GitHub repo'],
   },
   {

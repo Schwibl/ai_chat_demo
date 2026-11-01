@@ -16,3 +16,9 @@
     height: 14vw;
   }
 }
+
+@media (max-width: 360px) {
+  .chat-widget:has(.chat-panel[data-state="open"]) .chat-open-button {
+    display: none;
+  }
+}
