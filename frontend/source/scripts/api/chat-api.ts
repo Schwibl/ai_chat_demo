@@ -1,31 +1,84 @@
-const API_BASE = '/api/chat';
+const THREADS_KEY = 'portfolio-chat-threads';
+const REPLY_DELAY_MS = 750;
 
-// Shared POST JSON helper for mock chat REST
-async function postJson<T>(path: string, body: Record<string, string>): Promise<T> {
-  const response = await fetch(`${API_BASE}${path}`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body),
+const GREETING: t_Message = {
+  id: 'greeting',
+  role: 'assistant',
+  text: 'Hi. Ask anything. Replies are scripted in your browser.',
+  followUps: ['What can you do?', 'How is this built?'],
+};
+
+const ASSISTANT_REPLIES: { text: string; followUps: string[] }[] = [
+  {
+    text: 'Here is a short answer based on your question. This demo uses scripted replies, not a live model.',
+    followUps: ['Tell me more', 'Show an example', 'What stack is this?'],
+  },
+  {
+    text: 'The widget uses optimistic UI: your message appears immediately. Replies are scripted in your browser.',
+    followUps: ['How does polling work?', 'Open GitHub repo'],
+  },
+  {
+    text: 'Production version integrated into a CMS via a CDN bundle. This repo is a vanilla TS extract.',
+    followUps: [],
+  },
+];
+
+function wait(ms: number): Promise<void> {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
   });
+}
 
-  if (!response.ok) {
-    throw new Error(`API ${path} failed`);
+function readThreads(): Record<string, t_Message[]> {
+  try {
+    const raw = localStorage.getItem(THREADS_KEY);
+    if (!raw) {
+      return {};
+    }
+
+    const parsed: unknown = JSON.parse(raw);
+    if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+      return {};
+    }
+
+    return parsed as Record<string, t_Message[]>;
+  } catch {
+    return {};
   }
-
-  return response.json() as Promise<T>;
 }
 
-// Init chat session
+function writeThreads(threads: Record<string, t_Message[]>): void {
+  localStorage.setItem(THREADS_KEY, JSON.stringify(threads));
+}
+
 export function apiInit(): Promise<t_ChatInitResponse> {
-  return postJson('/init/', {});
+  const chatToken = `demo-${Date.now()}`;
+  const threads = readThreads();
+  threads[chatToken] = [GREETING];
+  writeThreads(threads);
+  return Promise.resolve({ chatToken });
 }
 
-// Fetch message history
 export function apiGetMessages(chatToken: string): Promise<t_ChatMessagesResponse> {
-  return postJson('/getMessages/', { chatToken });
+  const list = readThreads()[chatToken];
+  return Promise.resolve({ messages: Array.isArray(list) ? list : [] });
 }
 
-// Send user message
-export function apiSendMessage(chatToken: string, text: string): Promise<{ ok: boolean }> {
-  return postJson('/sendMessage/', { chatToken, text });
+export async function apiSendMessage(chatToken: string, text: string): Promise<{ ok: boolean }> {
+  const threads = readThreads();
+  const list = Array.isArray(threads[chatToken]) ? threads[chatToken] : [];
+  const reply = ASSISTANT_REPLIES[list.length % ASSISTANT_REPLIES.length];
+  const stamp = Date.now();
+
+  list.push({ id: `u-${stamp}`, role: 'user', text });
+  list.push({
+    id: `a-${stamp}`,
+    role: 'assistant',
+    text: reply.text,
+    followUps: reply.followUps,
+  });
+  threads[chatToken] = list;
+  writeThreads(threads);
+  await wait(REPLY_DELAY_MS);
+  return { ok: true };
 }

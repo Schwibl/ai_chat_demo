@@ -12,6 +12,11 @@
     opacity: 1;
     visibility: visible;
     pointer-events: auto;
+    cursor: pointer;
     transition: opacity 0.2s, visibility 0s linear 0s;
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.62);
+    }
   }
 }

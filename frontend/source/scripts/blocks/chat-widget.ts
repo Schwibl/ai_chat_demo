@@ -1,6 +1,5 @@
 import { MessageService } from '../features/message-service';
 
-// Stroke icons inherit the button color; aria-hidden because the button has the name
 const ICON_EXPAND =
   '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M9 4H4v5M15 4h5v5M20 15v5h-5M9 20H4v-5"/></svg>';
 const ICON_COMPACT =
@@ -10,12 +9,11 @@ const ICON_CLOSE =
 const ICON_SEND =
   '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M13 6l6 6-6 6"/></svg>';
 
-// Build host shell, open button, chat panel DOM; wire open/close
 export function mountChatWidget(root: HTMLElement): void {
   root.innerHTML = `
     <main class="host-page">
       <h1 class="host-page__title">Example site page</h1>
-      <p class="host-page__text">The chat widget below mirrors an embeddable production pattern: floating trigger, panel, mock REST, optimistic send.</p>
+      <p class="host-page__text">The chat widget below mirrors an embeddable production pattern: floating trigger, panel, scripted replies, optimistic send.</p>
     </main>
     <aside class="chat-widget" aria-label="Chat">
       <button type="button" class="button button--with-text button--accent chat-open-button" data-action="open-chat" aria-label="Open chat" aria-expanded="false" aria-controls="chat-panel">Chat</button>
@@ -48,14 +46,12 @@ export function mountChatWidget(root: HTMLElement): void {
     return;
   }
 
-  // Property, not only the attribute: innerHTML has dropped `inert` in some engines
   panel.inert = true;
 
   const service = new MessageService(panel, history, (text) => {
     void service.send(text);
   });
 
-  // Empty field cannot send; disabled color is raised in the panel styles
   const syncSendButton = (): void => {
     if (!sendBtn || !input) {
       return;
@@ -63,7 +59,6 @@ export function mountChatWidget(root: HTMLElement): void {
     sendBtn.disabled = input.value.trim().length === 0 || service.isSending();
   };
 
-  // Sync expand/compact glyph and accessible name with panel size modifier
   const updateSizeButton = (): void => {
     if (!sizeBtn) {
       return;
@@ -74,7 +69,6 @@ export function mountChatWidget(root: HTMLElement): void {
     sizeBtn.setAttribute('title', isFull ? 'Compact' : 'Expand');
   };
 
-  // Show panel, move focus into the field, and dim overlay
   const open = (): void => {
     panel.inert = false;
     panel.classList.add('chat-panel--opened');
@@ -87,7 +81,6 @@ export function mountChatWidget(root: HTMLElement): void {
     void service.start();
   };
 
-  // Hide panel from pointer, keyboard, and AT; return focus to the launcher
   const close = (): void => {
     panel.classList.remove('chat-panel--opened');
     panel.dataset.state = 'closed';
@@ -103,7 +96,6 @@ export function mountChatWidget(root: HTMLElement): void {
   closeBtn?.addEventListener('click', close);
   backdrop.addEventListener('click', close);
 
-  // Esc closes while the panel is open (textarea used to swallow it)
   document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape' && panel.dataset.state === 'open') {
       event.preventDefault();
@@ -117,7 +109,6 @@ export function mountChatWidget(root: HTMLElement): void {
     updateSizeButton();
   });
 
-  // Clear only after the service accepts the text, so a busy send does not drop it
   const submit = (): void => {
     if (!input || service.isSending() || input.value.trim().length === 0) {
       return;

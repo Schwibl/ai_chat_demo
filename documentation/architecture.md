@@ -7,7 +7,7 @@ main.ts → chat-widget.ts
             ├── <main> host-page
             ├── <aside aria-label="Chat"> trigger, backdrop, panel
             ├── MessageService (features/message-service.ts)
-            └── api/chat-api.ts → Vite mock plugin
+            └── api/chat-api.ts (scripted replies in the browser)
 ```
 
 The widget mounts into `#app`. In production, only the trigger and panel would inject into an existing page; the host block here simulates that page. The host is a `main` landmark. The trigger and panel sit in one named `aside`.
@@ -20,7 +20,7 @@ The widget mounts into `#app`. In production, only the trigger and panel would i
 | `chat-widget` | `styles/blocks/chat-widget.scss` | Fixed landmark that holds the trigger |
 | `chat-open-button` | `styles/blocks/chat-open-button.scss` | Trigger; opens panel |
 
-Markup is built in `blocks/chat-widget.ts`.
+Markup is built in `blocks/chat-widget.ts`. The launcher is hidden whenever `.chat-panel` has `data-state="open"`. Icon buttons are `aria-hidden` because the button has the name, and strokes use `currentColor`. `inert` is set as a property because `innerHTML` has dropped the attribute in some engines. Escape is handled on `document` because the textarea used to swallow it; closing returns focus to the launcher.
 
 ## Chat panel
 
@@ -43,22 +43,16 @@ Shared controls: `.button`, `.textarea` under `styles/blocks/`.
 | `chat-panel--sending` | Message in flight |
 | `chat-panel--error` | Init or send failed (inline text plus Retry) |
 
-## Mock REST API
+Opening the panel scales it from 0.96 to 1. Size checks wait until that transform is identity.
+
+## Scripted replies
 
 | Layer | Path |
 |-------|------|
 | Client | `frontend/source/scripts/api/chat-api.ts` |
 | Types | `frontend/source/scripts/types/chat.d.ts` |
-| Mock | `vite/chat-mock-plugin.ts` |
-| Config | `vite.config.ts` → `plugins: [chatMockPlugin()]` |
 
-All routes are **POST** JSON:
-
-- `/api/chat/init/` → `{ chatToken }`
-- `/api/chat/getMessages/` → `{ messages }`
-- `/api/chat/sendMessage/` → `{ ok: true }`
-
-The plugin keeps an in-memory `Map<chatToken, messages[]>`. Swap the plugin for `server.proxy` or a real backend in production; keep the client seam.
+Nothing is fetched. `apiInit`, `apiGetMessages`, and `apiSendMessage` read and write one thread in `localStorage` (`portfolio-chat-threads`), keyed by the session token (`portfolio-chat-token`). The reply script is a fixed greeting (“Replies are scripted in your browser.”), then `ASSISTANT_REPLIES[messageCount % 3]` chosen before the new user and assistant rows are stored. Send waits briefly so the preparing row can paint, then the service reloads the thread.
 
 ## MessageService
 
@@ -73,17 +67,19 @@ File: `frontend/source/scripts/features/message-service.ts`
 | Failure | Inline “Couldn't get a reply.” and Retry; closed panel is `inert` |
 | Chips | `followUps` buttons call `send(chipText)` |
 
+History text is escaped before `innerHTML`, so a message cannot become markup. The widget reads `isSending()` before it clears the field, so a busy send does not drop the draft. `start()` catches a failed boot so the rejection is not uncaught.
+
 Flow:
 
 ```
 open panel → start()
-send       → temp bubble + preparing → POST sendMessage → poll getMessages → reply or inline Retry
+send       → temp bubble + preparing → local send → reload thread → reply or inline Retry
 chip click → send(label)
 ```
 
-## Mock store limits
+## Store limits
 
-- Resets when the dev server restarts
+- Thread stays in this browser until site data is cleared
 - Canned assistant replies only — not a language model
 
 See [tech/next_steps.md](tech/next_steps.md) for deliberate gaps.

@@ -9,7 +9,7 @@ This repo’s pipeline is one GitHub Actions workflow, [`.github/workflows/pr-ch
 
 A new run for the same ref cancels the one still going (`concurrency.cancel-in-progress`). That keeps a stack of pushes from piling up.
 
-Nobody needs a secret, an API key, or a logged-in service. The chat demo talks to a mock that ships inside Vite’s dev and preview servers.
+Nobody needs a secret, an API key, or a logged-in service. The chat demo scripts its replies in the browser and does not call a server.
 
 ## Node and install
 
@@ -45,14 +45,9 @@ Output of the build is the `dist/` directory at the repo root. Vite’s project 
 3. `npm run build`.
 4. `npm run e2e`.
 
-`playwright.config.ts` starts `vite preview` on `http://127.0.0.1:4173` and waits until that URL responds. Preview serves `dist/` and still mounts the mock chat API (`vite/chat-mock-plugin.ts`), so the tests do not call a real model.
+`playwright.config.ts` starts `vite preview` on `http://127.0.0.1:4173` and waits until that URL responds. Preview serves `dist/` only. The tests do not call a real model.
 
-Four tests in `e2e/smoke.spec.ts`. The first three are the smoke bar (load, UI, one interaction). The fourth locks the no-key fallback:
-
-1. The app loads and the browser reports no console errors or page errors.
-2. The host page heading and the **Chat** trigger render.
-3. Clicking **Chat** opens the panel and the mock greeting is visible.
-4. If `/api/chat` returns 404, the panel says the API is not available and that no API key is required.
+`e2e/smoke.spec.ts` covers load, the host page, opening the panel, keyboard dismiss, the preparing row, touch target size, and a full scripted exchange. That last test blocks `/api` and still finishes the conversation.
 
 A failed run uploads the Playwright HTML report as the `playwright-report` artifact.
 
